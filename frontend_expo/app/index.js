@@ -23,7 +23,7 @@ export default function Home() {
           <Pressable style={styles.button} onPress={() => router.push('/login')}>
             <Text style={styles.buttonText}>Login</Text>
           </Pressable>
-          <Pressable style={styles.button} onPress={() => alert('Signup pressed')}>
+          <Pressable style={styles.button} onPress={() => router.push('/signup')}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </Pressable>
         </View>

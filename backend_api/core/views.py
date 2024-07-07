@@ -20,7 +20,7 @@ def user_signup(request):
         raw_password = form.cleaned_data.get('password1')
         user = authenticate(username=username, password=raw_password)
         if user is not None:
-            auth_login(request._request, user)  # Use request._request here
+            auth_login(request._request, user)
             logger.info(f"User {username} registered and logged in successfully")
             return Response({'message': 'User registered and logged in successfully'}, status=status.HTTP_201_CREATED)
         else:

@@ -6,9 +6,13 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 
+from .views import error_count, health_check
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("error-count/", error_count, name="error-count"),
+    path("health/", health_check, name="health_check"),
     path("", include("core.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

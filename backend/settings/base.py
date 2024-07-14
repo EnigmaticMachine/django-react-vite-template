@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "drf_spectacular",
+    "backend",
     "core",
 ]
 
@@ -35,6 +36,8 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django_brotli.middleware.BrotliMiddleware",
+    "backend.middleware.LogHttpRequestMiddleware",
+    "backend.middleware.TokenAuthMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -138,3 +141,5 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+GATUS_MONITORING_TOKEN = env("GATUS_MONITORING_TOKEN")

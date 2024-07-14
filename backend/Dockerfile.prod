@@ -19,5 +19,7 @@ RUN pip install -r /code/requirements.txt
 # Copy the project files
 COPY . /code/
 
-# Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "myproject.wsgi:application"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

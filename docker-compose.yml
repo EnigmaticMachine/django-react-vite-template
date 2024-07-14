@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   db:
+    container_name: db
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -13,9 +14,16 @@ services:
       - mynetwork
 
   backend:
+    container_name: backend
     build:
       context: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c '
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        python manage.py showmigrations &&
+        python manage.py runserver 0.0.0.0:8000
+      '
     volumes:
       - ./backend:/code
     ports:
@@ -34,6 +42,7 @@ services:
       - mynetwork
 
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
     volumes:

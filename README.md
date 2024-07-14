@@ -38,7 +38,7 @@ This repository serves as a starter template for developing web applications usi
 
 - The Django backend will be running at `http://localhost:8000`.
 - The React frontend will be running at `http://localhost:5173`.
-- The Nginx server will be running at http://localhost:80 and will proxy requests to the backend and frontend services.
+- The Nginx server will be running at `http://localhost:80` and will proxy requests to the backend and frontend services.
 
 ## Configuration
 

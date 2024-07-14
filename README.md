@@ -40,6 +40,18 @@ This repository serves as a starter template for developing web applications usi
 - The React frontend will be running at `http://localhost:5173`.
 - The Nginx server will be running at `http://localhost:80` and will proxy requests to the backend and frontend services.
 
+### Monitoring with Uptime Kuma
+
+To set up and run the Uptime Kuma monitoring service:
+
+1. **Build and run Docker containers for monitoring:**
+   ```sh
+   make monitoring-up
+   ```
+
+2. **Access Uptime Kuma dashboard:**
+   - The Uptime Kuma monitoring dashboard will be running at `http://localhost:3001`.
+
 ## Configuration
 
 ### Environment Variables
@@ -53,16 +65,19 @@ The backend service configuration is managed via environment variables specified
 - `DJANGO_ALLOWED_HOSTS`: Allowed hosts for the Django application.
 - `DJANGO_SECRET_KEY`: Secret key for Django.
 
+
 ### Docker Compose Services
 
 - **db**: Runs the PostgreSQL database.
 - **backend**: Runs the Django application.
 - **frontend**: Runs the React frontend.
 - **nginx**: Runs the Nginx server.
+- **uptime-kuma**: Runs the Uptime Kuma monitoring service.
 
 ### Volume Management
 
 - `postgres_data`: Stores the PostgreSQL data files.
+- `uptime-kuma-data`: Stores Uptime Kuma data.
 
 ## Running Tests
 

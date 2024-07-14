@@ -26,9 +26,9 @@ services:
       '
     volumes:
       - ./backend:/code
-      # - ./.env:/code/.env
     env_file:
       - .env
+      - .env.dev
     ports:
       - "8000:8000"
     depends_on:

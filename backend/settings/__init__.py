@@ -1,4 +1,5 @@
 import os
+from .base import *  # noqa: F403, F401
 
 environment = os.getenv("DJANGO_ENV", "dev")
 

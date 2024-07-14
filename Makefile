@@ -3,6 +3,8 @@ DC = docker-compose
 DEV_COMPOSE_FILE = docker-compose.dev.yml
 TEST_COMPOSE_FILE = docker-compose.test.yml
 PROD_COMPOSE_FILE = docker-compose.prod.yml
+MONITORING_COMPOSE_FILE = docker-compose.monitoring.yml
+
 
 # Default target
 .PHONY: help
@@ -28,6 +30,7 @@ dev-logs: ## Follow logs of Docker containers for development
 
 .PHONY: dev-migrate
 dev-migrate: ## Run database migrations for development
+	$(DC) -f $(DEV_COMPOSE_FILE) run backend python manage.py makemigrations
 	$(DC) -f $(DEV_COMPOSE_FILE) run backend python manage.py migrate
 
 .PHONY: dev-createsuperuser
@@ -103,3 +106,24 @@ prod-shell: ## Open a Django shell for production
 .PHONY: prod-clean
 prod-clean: ## Clean up Docker containers, images, and volumes for production
 	$(DC) -f $(PROD_COMPOSE_FILE) down -v --rmi all --remove-orphans
+
+# Monitoring targets
+.PHONY: monitoring-build
+monitoring-build: ## Build the Docker images for monitoring
+	$(DC) -f $(MONITORING_COMPOSE_FILE) build
+
+.PHONY: monitoring-up
+monitoring-up: ## Start the Docker containers for monitoring
+	$(DC) -f $(MONITORING_COMPOSE_FILE) up -d 
+
+.PHONY: monitoring-down
+monitoring-down: ## Stop the Docker containers for monitoring
+	$(DC) -f $(MONITORING_COMPOSE_FILE) down
+
+.PHONY: monitoring-logs
+monitoring-logs: ## Follow logs of Docker containers for monitoring
+	$(DC) -f $(MONITORING_COMPOSE_FILE) logs -f
+
+.PHONY: monitoring-clean
+monitoring-clean: ## Clean up Docker containers, images, and volumes for monitoring
+	$(DC) -f $(MONITORING_COMPOSE_FILE) down -v --rmi all --remove-orphans

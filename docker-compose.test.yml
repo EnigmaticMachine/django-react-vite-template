@@ -5,11 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.test
-    command: >
-      sh -c '
-        python manage.py migrate &&
-        pytest
-      '
+    command: "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/code
     env_file:

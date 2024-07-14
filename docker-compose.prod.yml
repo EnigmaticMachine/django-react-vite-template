@@ -18,11 +18,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    command: >
-      sh -c '
-        python manage.py migrate &&
-        python manage.py runserver 0.0.0.0:8000
-      '
+    command: "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/code
       - ./.env:/code/.env
@@ -57,8 +53,20 @@ services:
     networks:
       - mynetwork
 
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - mynetwork
+    volumes:
+      - uptime-kuma-data:/app/data
+
 volumes:
   postgres_data:
+  uptime-kuma-data:
 
 networks:
   mynetwork:

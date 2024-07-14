@@ -1,4 +1,5 @@
 from .base import env
+from .base import LOGGING as BASE_LOGGING
 
 
 DATABASES = {
@@ -15,3 +16,16 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS if not handled by Nginx
+
+
+LOGGING = BASE_LOGGING.copy()
+LOGGING["handlers"]["file"] = {
+    "class": "logging.FileHandler",
+    "filename": "django.log",
+    "formatter": "standard",
+}
+
+LOGGING["loggers"]["django"]["handlers"].append("file")
+LOGGING["loggers"]["core"]["handlers"].append("file")
+LOGGING["loggers"]["django"]["level"] = "INFO"
+LOGGING["loggers"]["core"]["level"] = "INFO"

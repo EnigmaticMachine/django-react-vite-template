@@ -1,4 +1,5 @@
 from .base import BASE_DIR
+from .base import LOGGING as BASE_LOGGING
 
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -11,3 +12,8 @@ DATABASES = {
         "ATOMIC_REQUESTS": True,
     }
 }
+
+LOGGING = BASE_LOGGING.copy()
+LOGGING["loggers"]["django"]["level"] = "DEBUG"
+LOGGING["loggers"]["core"]["level"] = "DEBUG"
+LOGGING["handlers"]["console"]["formatter"] = "standard"

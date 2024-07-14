@@ -1,5 +1,4 @@
-from pathlib import Path
-from .base import *
+from .base import BASE_DIR
 
 
 DEBUG = True

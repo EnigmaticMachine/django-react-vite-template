@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    networks:
+      - mynetwork
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    command: >
+      sh -c '
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        python manage.py showmigrations &&
+        python manage.py runserver 0.0.0.0:8000
+      '
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DEBUG: '1'
+      DJANGO_ALLOWED_HOSTS: 'localhost 127.0.0.1 [::1]'
+      DATABASE: postgres
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_HOST: db
+      DJANGO_ENV: dev 
+    networks:
+      - mynetwork
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - mynetwork
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - mynetwork
+
+volumes:
+  postgres_data:
+
+networks:
+  mynetwork:

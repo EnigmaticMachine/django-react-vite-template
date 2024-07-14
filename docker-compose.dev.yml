@@ -17,6 +17,7 @@ services:
     container_name: backend
     build:
       context: ./backend
+      dockerfile: Dockerfile.dev
     command: >
       sh -c '
         python manage.py makemigrations &&

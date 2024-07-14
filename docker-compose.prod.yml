@@ -24,19 +24,11 @@ services:
       '
     volumes:
       - ./backend:/code
+      - ./.env:/code/.env
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      DEBUG: '0'
-      DJANGO_ALLOWED_HOSTS: 'your-production-domain.com'
-      DATABASE: postgres
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_HOST: db
-      DJANGO_ENV: prod  # Set to 'prod' for production environment
     networks:
       - mynetwork
 

@@ -26,19 +26,13 @@ services:
       '
     volumes:
       - ./backend:/code
+      # - ./.env:/code/.env
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      DEBUG: '1'
-      DJANGO_ALLOWED_HOSTS: 'localhost 127.0.0.1 [::1]'
-      DATABASE: postgres
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_HOST: db
-      DJANGO_ENV: dev 
     networks:
       - mynetwork
 

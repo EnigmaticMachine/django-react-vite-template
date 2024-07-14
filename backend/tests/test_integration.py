@@ -1,7 +1,6 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from django.contrib.auth.models import User
 
 
 @pytest.mark.django_db

@@ -21,7 +21,7 @@ def test_user_signup(api_client):
 
 @pytest.mark.django_db
 def test_user_login(api_client, create_user):
-    user = create_user(username="testuser", password="testpassword123")
+    create_user(username="testuser", password="testpassword123")
     url = reverse("core:login")
     data = {"username": "testuser", "password": "testpassword123"}
     response = api_client.post(url, data, format="json")
@@ -40,7 +40,7 @@ def test_user_login_invalid(api_client):
 
 @pytest.mark.django_db
 def test_user_logout(api_client, create_user):
-    user = create_user(username="testuser", password="testpassword123")
+    create_user(username="testuser", password="testpassword123")
     api_client.login(username="testuser", password="testpassword123")
     url = reverse("core:logout")
     response = api_client.post(url, format="json")

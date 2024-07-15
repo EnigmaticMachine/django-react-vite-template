@@ -1,7 +1,7 @@
 import logging
 from django.conf import settings
 from django.http import HttpResponseForbidden
-from .models import ErrorLog
+from core.models import ErrorLog
 
 logger = logging.getLogger(__name__)
 

@@ -65,7 +65,6 @@ The backend service configuration is managed via environment variables specified
 - `DJANGO_ALLOWED_HOSTS`: Allowed hosts for the Django application.
 - `DJANGO_SECRET_KEY`: Secret key for Django.
 
-
 ### Docker Compose Services
 
 - **db**: Runs the PostgreSQL database.
@@ -79,6 +78,50 @@ The backend service configuration is managed via environment variables specified
 - `postgres_data`: Stores the PostgreSQL data files.
 - `uptime-kuma-data`: Stores Uptime Kuma data.
 
+## Features
+
+### Security
+
+- **Environment Variables**: Managed using `django-environ`.
+  - Sensitive information is stored in environment variables, not in the codebase.
+  - `.env`, `.env.dev`, and `.env.test` files for different environments.
+- **Django Security Middleware**: Enabled to ensure secure HTTP headers.
+
+
+### Database
+
+- **PostgreSQL**: Configured for production readiness.
+
+### Performance
+
+- **Compression**: Enabled Gzip and Brotli compression for responses.
+
+### Maintainability
+
+- **Code Quality**: Enforced with `black`, `pylint`, and `flake8`.
+- **Documentation**: Auto-generated using `drf-spectacular` with Swagger integration.
+- **Testing**:
+  - Unit, integration, and end-to-end tests.
+  - Database cleanup after each test.
+- **Project Structure**:
+  - Organized settings with separate files for base, test, dev, and prod configurations.
+- **Makefile**:
+  - Commands for tests, starting the local server, and starting the production server.
+
+### Monitoring and Logging
+
+- **Application Monitoring and Logging**:
+  - Health endpoint added.
+  - Separate logging settings for production and development.
+  - Uptime Kuma setup for monitoring.
+  - Custom `LogHttpRequestMiddleware` to track error response codes.
+
+### Deployment
+
+- **CI/CD Pipelines**:
+  - Set up with GitHub Actions for continuous integration and deployment.
+  - Workflows for running tests and linters.
+
 ## Running Tests
 
 ### Backend Tests
@@ -86,12 +129,6 @@ The backend service configuration is managed via environment variables specified
 To run the backend tests:
 
 1. **Build and run Docker containers for testing:**
-   ```sh
-   make test-build
-   make test-up
-   ```
-
-2. **Run tests:**
    ```sh
    make test-run
    ```

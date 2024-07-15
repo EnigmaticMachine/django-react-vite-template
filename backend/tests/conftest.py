@@ -1,4 +1,3 @@
-import django
 import pytest
 import logging
 from django.contrib.auth.models import User

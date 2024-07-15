@@ -34,7 +34,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.gzip.GZipMiddleware",    
+    "django.middleware.gzip.GZipMiddleware",
     "django_brotli.middleware.BrotliMiddleware",
     "backend.middleware.LogHttpRequestMiddleware",
     "backend.middleware.TokenAuthMiddleware",

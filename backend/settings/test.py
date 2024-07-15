@@ -1,6 +1,5 @@
 import os
 from .base import BASE_DIR
-from .base import LOGGING as BASE_LOGGING
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]

@@ -1,8 +1,6 @@
 import pytest
 import requests
 import logging
-from django.urls import reverse
-from rest_framework import status
 
 
 logger = logging.getLogger(__name__)

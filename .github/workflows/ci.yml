@@ -24,9 +24,9 @@ jobs:
       - name: Create .env file
         run: |
           echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
-          echo "DJANGO_ENV=${{ secrets.DJANGO_ENV }}" >> .env
-          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
-          echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> .env
+          echo "DJANGO_ENV=${{ secrets.DJANGO_ENV }}" >> .env.test
+          echo "DEBUG=${{ secrets.DEBUG }}" >> .env.test
+          echo "DJANGO_ALLOWED_HOSTS=${{ secrets.DJANGO_ALLOWED_HOSTS }}" >> .env.test
 
       - name: Install dependencies
         run: |

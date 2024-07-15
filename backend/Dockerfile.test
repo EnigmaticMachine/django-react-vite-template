@@ -1,6 +1,7 @@
+# Use the official slim Python image
 FROM python:3.11-slim
 
-# Set environment variables
+# Set environment variables to avoid .pyc files and buffer output
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -10,18 +11,26 @@ WORKDIR /code
 # Install pip
 RUN pip install --upgrade pip
 
-# Copy only requirements to cache dependencies layer
-COPY requirements.txt /code/
-COPY requirements.test.txt /code/
+# Copy and install only the requirements for testing
+COPY requirements.txt requirements.test.txt /code/
+RUN pip install -r /code/requirements.txt && pip install -r /code/requirements.test.txt
 
-# Install project dependencies
-RUN pip install -r /code/requirements.txt
-RUN pip install -r /code/requirements.test.txt
+# Copy only the necessary project files
+COPY manage.py /code/
+COPY entrypoint.sh /code/
+COPY pytest.ini /code/
 
-# Copy the project files
-COPY . /code/
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Copy backend and core applications
+COPY backend /code/backend
+COPY core /code/core
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Copy settings and tests
+COPY settings /code/settings
+COPY tests /code/tests
+
+# Ensure entrypoint script is executable
+RUN chmod +x /code/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/code/entrypoint.sh"]

@@ -2,28 +2,37 @@ version: '3.8'
 
 services:
   backend:
+    container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile.test
     command: "python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./backend:/code
     env_file:
       - .env
       - .env.test
     networks:
-      - mynetwork
+      - pytestnetwork
+    ports:
+      - "8000:8000"
+    # depends_on:
+    #   - nginx
+    volumes:
+      - test_db_data:/code/db_data
 
   nginx:
     image: nginx:latest
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/test.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - pytestnetwork
     depends_on:
       - backend
-    networks:
-      - mynetwork
 
 networks:
-  mynetwork:
+  pytestnetwork:
+
+volumes:
+  test_db_data:

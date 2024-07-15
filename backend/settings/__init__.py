@@ -1,7 +1,7 @@
 import os
 from .base import *  # noqa: F403, F401
 
-environment = os.getenv("DJANGO_ENV", "dev")
+environment = env("DJANGO_ENV")
 
 if environment == "prod":
     from .prod import *  # noqa: F403, F401

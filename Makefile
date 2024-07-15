@@ -64,7 +64,19 @@ test-logs: ## Follow logs of Docker containers for testing
 
 .PHONY: test-run
 test-run: ## Run tests
+	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
+	$(DC) -f $(TEST_COMPOSE_FILE) build
+	$(DC) -f $(TEST_COMPOSE_FILE) up -d
 	$(DC) -f $(TEST_COMPOSE_FILE) run backend pytest
+	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
+
+.PHONY: test-run-debug
+test-run-debug: ## Run tests
+	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
+	$(DC) -f $(TEST_COMPOSE_FILE) build
+	$(DC) -f $(TEST_COMPOSE_FILE) up -d
+	$(DC) -f $(TEST_COMPOSE_FILE) run backend pytest --log-cli-level=DEBUG
+	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
 
 .PHONY: test-shell
 test-shell: ## Open a Django shell for testing
@@ -114,7 +126,7 @@ monitoring-build: ## Build the Docker images for monitoring
 
 .PHONY: monitoring-up
 monitoring-up: ## Start the Docker containers for monitoring
-	$(DC) -f $(MONITORING_COMPOSE_FILE) up -d 
+	$(DC) -f $(MONITORING_COMPOSE_FILE) up -d
 
 .PHONY: monitoring-down
 monitoring-down: ## Stop the Docker containers for monitoring

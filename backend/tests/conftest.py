@@ -1,12 +1,10 @@
 import django
 import pytest
-import os
+import logging
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
-django.setup()
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture

@@ -62,6 +62,7 @@ def user_logout(request):
     return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
 def error_count(request):
     one_hour_ago = timezone.now() - timedelta(hours=1)
     count = ErrorLog.objects.filter(
@@ -70,6 +71,7 @@ def error_count(request):
     return JsonResponse({"error_count": count})
 
 
+@api_view(["GET"])
 def health_check(request):
     db_conn = connections["default"]
     try:
@@ -77,3 +79,12 @@ def health_check(request):
     except OperationalError:
         return JsonResponse({"status": "unhealthy"}, status=500)
     return JsonResponse({"status": "healthy"})
+
+
+@api_view(["GET"])
+def test_long_response(request):
+    data = {
+        "data": ["This is a long response"]
+        * 10  # Repeat the string to ensure the response is long
+    }
+    return Response(data)

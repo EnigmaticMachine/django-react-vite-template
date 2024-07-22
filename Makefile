@@ -67,6 +67,7 @@ test-run: ## Run tests
 	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
 	$(DC) -f $(TEST_COMPOSE_FILE) build
 	$(DC) -f $(TEST_COMPOSE_FILE) up -d
+	sleep 0.1
 	$(DC) -f $(TEST_COMPOSE_FILE) run backend pytest
 	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
 
@@ -75,6 +76,7 @@ test-run-debug: ## Run tests
 	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
 	$(DC) -f $(TEST_COMPOSE_FILE) build
 	$(DC) -f $(TEST_COMPOSE_FILE) up -d
+	sleep 0.1
 	$(DC) -f $(TEST_COMPOSE_FILE) run backend pytest --log-cli-level=DEBUG
 	$(DC) -f $(TEST_COMPOSE_FILE) down --volumes --remove-orphans
 

@@ -11,5 +11,4 @@ urlpatterns = [
     path("error-count/", views.error_count, name="error-count"),
     path("health/", views.health_check, name="health_check"),
     path("test_long_response/", views.test_long_response, name="test_long_response"),
-
 ]

@@ -1,14 +1,14 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ErrorLogViewSet, UserViewSet, CheckViewSet
 
 app_name = "core"
 
+router = DefaultRouter()
+router.register(r"users", UserViewSet)
+router.register(r"error-logs", ErrorLogViewSet)
+router.register(r"check", CheckViewSet, basename="check")
 
 urlpatterns = [
-    path("signup/", views.user_signup, name="signup"),
-    path("login/", views.user_login, name="login"),
-    path("logout/", views.user_logout, name="logout"),
-    path("error-count/", views.error_count, name="error-count"),
-    path("health/", views.health_check, name="health_check"),
-    path("test_long_response/", views.test_long_response, name="test_long_response"),
+    path("", include(router.urls)),
 ]

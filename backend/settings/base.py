@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
     "backend",
@@ -37,7 +38,6 @@ MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
     "django_brotli.middleware.BrotliMiddleware",
     "backend.middleware.LogHttpRequestMiddleware",
-    "backend.middleware.TokenAuthMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -133,6 +133,12 @@ CORS_ALLOW_ALL_ORIGINS = (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 SPECTACULAR_SETTINGS = {

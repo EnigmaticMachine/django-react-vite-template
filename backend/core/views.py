@@ -1,90 +1,123 @@
 import logging
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from datetime import timedelta
+
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import login as auth_login
-from django.http import JsonResponse
-from django.utils import timezone
 from django.db import connections
 from django.db.utils import OperationalError
-from datetime import timedelta
+from django.utils import timezone
+from django.contrib.auth.models import User
+
+from rest_framework import status, viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .forms import SignUpForm
 from .models import ErrorLog
+from .serializers import ErrorLogSerializer, UserSerializer
+from rest_framework.exceptions import ValidationError
+
 
 logger = logging.getLogger(__name__)
 
 
-@api_view(["POST"])
-def user_signup(request):
-    logger.info("Sign-up request received")
-    logger.debug(f"Received data: {request.data}")
-    form = SignUpForm(request.data)
-    if form.is_valid():
-        user = form.save()
-        username = form.cleaned_data.get("username")
-        raw_password = form.cleaned_data.get("password1")
-        user = authenticate(username=username, password=raw_password)
+class ErrorLogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ErrorLog.objects.all()
+    serializer_class = ErrorLogSerializer
+
+    @action(detail=False, methods=["get"])
+    def error_count(self, request):
+        one_hour_ago = timezone.now() - timedelta(hours=1)
+        count = ErrorLog.objects.filter(
+            timestamp__gte=one_hour_ago, status_code__gte=400
+        ).count()
+        return Response({"error_count": count})
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=False, methods=["post"], permission_classes=[AllowAny])
+    def signup(self, request):
+        form = SignUpForm(request.data)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password1")
+            user = authenticate(username=username, password=raw_password)
+            if user is not None:
+                login(request, user)
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response(
+                    {
+                        "message": "User registered and logged in successfully",
+                        "token": token.key,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(
+                    {"errors": "Authentication failed"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        return Response({"errors": form.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], permission_classes=[AllowAny])
+    def login(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            auth_login(request._request, user)
-            logger.info(f"User {username} registered and logged in successfully")
+            login(request, user)
+            token, _ = Token.objects.get_or_create(user=user)
             return Response(
-                {"message": "User registered and logged in successfully"},
-                status=status.HTTP_201_CREATED,
+                {"message": "Login successful", "token": token.key},
+                status=status.HTTP_200_OK,
             )
-        else:
-            logger.warning(f"Authentication failed for user {username}")
+        return Response(
+            {"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    @action(detail=False, methods=["post"], permission_classes=[AllowAny])
+    def token_auth(self, request):
+        serializer = ObtainAuthToken.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError:
             return Response(
-                {"errors": "Authentication failed"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
             )
-    logger.error("Sign-up form is invalid")
-    logger.error(f"Form errors: {form.errors}")
-    return Response({"errors": form.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {"message": "Login successful", "token": token.key},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["post"], permission_classes=[IsAuthenticated])
+    def logout(self, request):
+        logout(request)
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def user_login(request):
-    username = request.data.get("username")
-    password = request.data.get("password")
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
-    return Response(
-        {"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-    )
+class CheckViewSet(viewsets.ViewSet):
 
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny])
+    def health(self, request):
+        db_conn = connections["default"]
+        try:
+            db_conn.cursor()
+        except OperationalError:
+            return Response({"status": "unhealthy"}, status=500)
+        return Response({"status": "healthy"})
 
-@api_view(["POST"])
-def user_logout(request):
-    logout(request)
-    return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def error_count(request):
-    one_hour_ago = timezone.now() - timedelta(hours=1)
-    count = ErrorLog.objects.filter(
-        timestamp__gte=one_hour_ago, status_code__gte=400
-    ).count()
-    return JsonResponse({"error_count": count})
-
-
-@api_view(["GET"])
-def health_check(request):
-    db_conn = connections["default"]
-    try:
-        db_conn.cursor()
-    except OperationalError:
-        return JsonResponse({"status": "unhealthy"}, status=500)
-    return JsonResponse({"status": "healthy"})
-
-
-@api_view(["GET"])
-def test_long_response(request):
-    data = {
-        "data": ["This is a long response"]
-        * 10  # Repeat the string to ensure the response is long
-    }
-    return Response(data)
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny])
+    def test_long_response(self, request):
+        data = {"data": ["This is a long response"] * 10}
+        return Response(data)

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -19,8 +19,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     command: "python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./backend:/code
     env_file:
       - .env
       - .env.dev
@@ -28,30 +26,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    networks:
-      - mynetwork
-
-  frontend:
-    container_name: frontend
-    build:
-      context: ./frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "5173:5173"
-    networks:
-      - mynetwork
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-    depends_on:
-      - frontend
-      - backend
     networks:
       - mynetwork
 

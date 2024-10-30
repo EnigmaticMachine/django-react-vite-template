@@ -1,5 +1,5 @@
 # Variables
-DC = docker-compose
+DC = docker compose
 DEV_COMPOSE_FILE = docker-compose.dev.yml
 TEST_COMPOSE_FILE = docker-compose.test.yml
 PROD_COMPOSE_FILE = docker-compose.prod.yml

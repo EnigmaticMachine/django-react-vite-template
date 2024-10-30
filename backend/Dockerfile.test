@@ -17,7 +17,7 @@ RUN pip install -r /code/requirements.txt && pip install -r /code/requirements.t
 
 # Copy only the necessary project files
 COPY manage.py /code/
-COPY entrypoint.sh /code/
+COPY scripts/entrypoint.sh /code/
 COPY pytest.ini /code/
 
 

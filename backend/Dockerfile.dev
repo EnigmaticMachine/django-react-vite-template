@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Set environment variables
+# Set environment variables to avoid .pyc files and buffer output
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -10,19 +10,26 @@ WORKDIR /code
 # Install pip
 RUN pip install --upgrade pip
 
-# Copy only requirements to cache dependencies layer
+# Copy and install only the requirements for testing
 COPY requirements.txt /code/
-COPY requirements.dev.txt /code/
-
-# Install project dependencies
 RUN pip install -r /code/requirements.txt
-RUN pip install -r /code/requirements.dev.txt
+
+# Copy only the necessary project files
+COPY manage.py /code/
+COPY scripts/entrypoint.sh /code/
+COPY pytest.ini /code/
 
 
-# Copy the project files
-COPY . /code/
+# Copy backend and core applications
+COPY backend /code/backend
+COPY core /code/core
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Copy settings and tests
+COPY settings /code/settings
+COPY tests /code/tests
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Ensure entrypoint script is executable
+RUN chmod +x /code/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/code/entrypoint.sh"]

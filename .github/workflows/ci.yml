@@ -37,10 +37,7 @@ jobs:
         run: flake8 --config=backend/.flake8 .
 
       - name: Set up Docker Compose
-        run: docker-compose -f docker-compose.test.yml up -d
+        run: docker compose -f docker-compose.test.yml up -d
 
       - name: Run tests
-        run: docker-compose -f docker-compose.test.yml run backend pytest
-
-      - name: Tear down Docker Compose
-        run: docker-compose -f docker-compose.test.yml down
+        run: docker compose -f docker-compose.test.yml run backend pytest
